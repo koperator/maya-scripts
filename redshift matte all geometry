@@ -1,0 +1,13 @@
+import maya.cmds as cmds
+
+def pFXMatte():
+    objs = cmds.ls(type='mesh')
+
+    for obj in objs:
+        print (obj)
+        cmds.setAttr('{}.rsMatteEnable'.format(obj),1)
+        cmds.setAttr('{}.rsMatteAlpha'.format(obj),0)
+
+
+      
+pFXMatte()
