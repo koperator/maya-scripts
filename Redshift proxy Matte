@@ -1,0 +1,5 @@
+string $sel[] = `ls -type RedshiftProxyMesh `;
+for ($item in $sel)
+{
+ 		setAttr ($item + ".visibilityMode") 1;
+}
