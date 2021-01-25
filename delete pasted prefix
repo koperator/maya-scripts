@@ -1,0 +1,26 @@
+## This script requires pymel
+
+## This script is a quick and simple way to clean up a scene after
+## copy and pasting in Maya. It searches for objects with the name
+## starting with pasted__, ungroups them if they came in a group,
+## and renames them. Pymel automatically renames them uniquely if
+## needed.
+
+## Import pymel
+from pymel.core import *
+
+## Stores a list of all objects starting with pasted__
+pastedObjects = ls('pasted__*')
+
+## For each thing in the list, store it as object
+for object in pastedObjects:
+    ## Get a list of it's direct parent
+    rel = listRelatives(object, p=True)
+    ## If that parent starts with group
+    if 'group*' in rel:
+        ## It came in root level and is pasted in a group, so ungroup it
+        rel[0].ungroup()
+    ## The new name is the objects name without pasted__
+    newName = object.replace('pasted__', '')
+    ## Rename the object with the new name
+    rename(object, newName)
