@@ -1,0 +1,5 @@
+### to wkej we frequency
+stray() ? rand(0,.5):rand(0,1)
+
+### to wkej w magnitude
+stray() ? rand(1,5): rand(0,.5)
