@@ -1,0 +1,145 @@
+
+/*
+Script developed by Chris John Debski ©2016.
+*/
+
+string $arrayB[];
+string $fileNodes[] = `ls -type file`;
+int $size = size($fileNodes);
+//search same filepaths
+for ($obj in $fileNodes)
+{
+    string $queryPath = `getAttr ($obj+".fileTextureName")`;
+    for ( $i=0; $i<$size; ++$i)
+    {
+        string $queryPathB = `getAttr ($fileNodes[$i]+".fileTextureName")`;
+        if ($obj == $fileNodes[$i])
+        {
+            print "The same node.\n";
+        }
+        else
+        {
+            if ($queryPathB == $queryPath)
+            {
+                stringArrayInsertAtIndex(1, $arrayB, $fileNodes[$i]);
+            }
+        }
+    }
+}
+string $array[] = stringArrayRemoveDuplicates($arrayB);
+
+//erase all but one
+string $queryWindow = `window -exists WindowInfoB`;
+if ($queryWindow == 1)
+{
+    deleteUI WindowInfoB;
+}
+string $nowaNazwa;
+string $windowInfo = `window WindowInfoB`;
+rowColumnLayout -numberOfColumns 1
+    -columnWidth 1 500 siema;
+int $sizeB = size ($array);
+for ( $i=0; $i<$sizeB; ++$i)
+{
+    string $queryPathC = `getAttr ($array[$i]+".fileTextureName")`;
+    int $queryNum = `rowColumnLayout -q -nch siema`;
+    if ($queryNum == 0)
+    {
+        text -label $array[$i] -parent siema $queryPathC;
+    }
+    else if ($queryNum > 0)
+    {
+        string $queryArr[] = `rowColumnLayout -q -ca siema`;
+
+        python "import maya.mel";
+        string $pathPass = "python \"nazwa = \'"+ $queryPathC +"'\"";
+        eval ($pathPass);
+        string $pathPass = "python \"nowaNazwaA = nazwa.replace(\'/\', \'_\')\"";
+        eval ($pathPass);
+        string $pathPass = "python \"nowaNazwaB = nowaNazwaA.replace(\'.\', \'_\')\"";
+        eval ($pathPass);
+        string $pathPass = "python \"nowaNazwaC = nowaNazwaB.replace(\'<\', \'_\')\"";
+        eval ($pathPass);
+        string $pathPass = "python \"nowaNazwa = nowaNazwaC.replace(\'>\', \'_\')\"";
+        eval ($pathPass);
+        $nowaNazwa = `python "nowaNazwa"`;
+
+        int $index = stringArrayFind( $nowaNazwa, 0, $queryArr );
+
+        if ($index == -1)
+        {
+            text -label $array[$i] -parent siema $queryPathC;
+        }
+        else
+        {
+            string $list[] = `listConnections $array[$i]`;
+            //connecty
+            for ($item in $queryArr)
+            {
+                string $mainQuery = `text -q -label $item`;
+                if ($item == $nowaNazwa)
+                {
+                    string $queryCon[] = `connectionInfo -dfs ($array[$i]+".outColor")`;
+                    int $si = size ($queryCon);
+                    if ($si > 0)
+                    {
+                        for ($itemZ in $queryCon)
+                        {
+                            connectAttr -f ($mainQuery+".outColor") $itemZ;
+                        }
+                    }
+                    string $queryCon[] = `connectionInfo -dfs ($array[$i]+".outAlpha")`;
+                    int $si = size ($queryCon);
+                    if ($si > 0)
+                    {
+                        for ($itemZ in $queryCon)
+                        {
+                            connectAttr -f ($mainQuery+".outAlpha") $itemZ;
+                        }
+                    }
+                    string $queryCon[] = `connectionInfo -dfs ($array[$i]+".outColorR")`;
+                    int $si = size ($queryCon);
+                    if ($si > 0)
+                    {
+                        for ($itemZ in $queryCon)
+                        {
+                            connectAttr -f ($mainQuery+".outColorR") $itemZ;
+                        }
+                    }
+                    string $queryCon[] = `connectionInfo -dfs ($array[$i]+".outColorG")`;
+                    int $si = size ($queryCon);
+                    if ($si > 0)
+                    {
+                        for ($itemZ in $queryCon)
+                        {
+                            connectAttr -f ($mainQuery+".outColorG") $itemZ;
+                        }
+                    }
+                    string $queryCon[] = `connectionInfo -dfs ($array[$i]+".outColorB")`;
+                    int $si = size ($queryCon);
+                    if ($si > 0)
+                    {
+                        for ($itemZ in $queryCon)
+                        {
+                            connectAttr -f ($mainQuery+".outColorB") $itemZ;
+                        }
+                    }
+                }
+            }
+            for ($objB in $list)
+            {
+                if (`gmatch $objB "*place2dTexture*"`)
+                {
+                    delete $objB;
+                    break;
+                }
+            }
+            delete $array[$i];
+        }
+    }
+}
+
+clear $arrayB;
+clear $array;
+
+
