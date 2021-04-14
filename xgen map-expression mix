@@ -1,0 +1,5 @@
+$lenghtmap = map('${DESC}/groom/lenght/');
+$randMin= 1;
+$randMax =1;
+$randlenght = rand($randMin,$randMax);
+$lenghtmap*$randlenght
